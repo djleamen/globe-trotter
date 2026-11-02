@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>Globe Trotter</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="app">
+    <aside id="panel" aria-label="Bucket list panel">
+      <header class="panel-head">
+        <h1>Globe&nbsp;Trotter</h1>
+        <button id="panel-toggle" class="icon-btn" aria-expanded="true" aria-controls="panel-body" title="Collapse panel">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3 5 8l5 5" /></svg>
+        </button>
+      </header>
+
+      <div id="panel-body">
+        <div class="segmented" role="tablist" aria-label="Map detail level">
+          <button role="tab" data-view="countries" class="is-active">Countries</button>
+          <button role="tab" data-view="regions">Regions</button>
+          <button role="tab" data-view="cities">Cities</button>
+        </div>
+
+        <section class="stat-block">
+          <div class="stat-row">
+            <span class="stat-label" id="world-label">Countries visited</span>
+            <span class="stat-value"><b id="world-count">0</b><span id="world-total">/242</span></span>
+          </div>
+          <div class="bar"><i id="world-bar" style="width:0%"></i></div>
+        </section>
+
+        <section class="list-block">
+          <div class="list-head">
+            <h2>Bucket list</h2>
+            <span class="pill" id="bucket-pill">0%</span>
+          </div>
+          <div class="bar bar-bucket"><i id="bucket-bar" style="width:0%"></i></div>
+          <p class="muted" id="bucket-sub">Add dream destinations, then tick them off on the map.</p>
+
+          <div class="search">
+            <input id="search" type="text" autocomplete="off" spellcheck="false" placeholder="Search a country…" aria-label="Search destinations" />
+            <div id="results" class="results" hidden></div>
+          </div>
+
+          <ul id="bucket-list" class="bucket"></ul>
+        </section>
+
+        <footer class="panel-foot">
+          <button id="btn-export" class="ghost">Export</button>
+          <button id="btn-import" class="ghost">Import</button>
+          <button id="btn-reset" class="ghost danger">Reset</button>
+          <input id="file-import" type="file" accept="application/json" hidden />
+        </footer>
+      </div>
+    </aside>
+
+    <main id="stage">
+      <svg id="map" role="img" aria-label="World map">
+        <g id="world">
+          <g id="layer-countries" class="layer"></g>
+          <g id="layer-regions" class="layer" hidden></g>
+          <g id="layer-cities" class="layer" hidden></g>
+        </g>
+      </svg>
+
+      <div id="tooltip" class="tooltip" hidden></div>
+
+      <div class="map-ui">
+        <div class="legend">
+          <span><i class="sw visited"></i>Visited</span>
+          <span><i class="sw wish"></i>Bucket list</span>
+        </div>
+        <div class="zoom-ui">
+          <button id="zoom-in" class="icon-btn" title="Zoom in">+</button>
+          <button id="zoom-out" class="icon-btn" title="Zoom out">−</button>
+          <button id="zoom-reset" class="icon-btn" title="Reset view">⤾</button>
+        </div>
+      </div>
+
+      <p class="hint">Click to toggle visited · <kbd>Alt</kbd>+click to add to bucket list</p>
+      <div id="loading" class="loading" hidden><span></span>Loading map…</div>
+    </main>
+  </div>
+
+  <script src="vendor/d3.v7.min.js"></script>
+  <script src="vendor/topojson-client.v3.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
