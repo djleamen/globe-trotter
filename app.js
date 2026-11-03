@@ -111,9 +111,10 @@ function applySnapshot(raw) {
     next.visited[view] = new Set(idList(raw.visited?.[view]));
     next.bucket[view] = Array.from(new Set(idList(raw.bucket?.[view])));
   }
+  const view = typeof raw.view === 'string' && Object.hasOwn(VIEWS, raw.view) ? raw.view : null;
   Object.assign(state.visited, next.visited);
   Object.assign(state.bucket, next.bucket);
-  if (Object.hasOwn(VIEWS, raw.view)) state.view = raw.view;
+  if (view) state.view = view;
   if (typeof raw.panelOpen === 'boolean') state.panelOpen = raw.panelOpen;
 }
 
