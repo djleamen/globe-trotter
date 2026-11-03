@@ -87,15 +87,33 @@ function load() {
     raw = null;
   }
   if (!raw) return;
-  applySnapshot(raw);
+  try {
+    applySnapshot(raw);
+  } catch {
+    /* stored data is malformed — start fresh rather than fail to boot */
+  }
 }
 
-function applySnapshot(raw) {
-  for (const view of Object.keys(VIEWS)) {
-    state.visited[view] = new Set(raw.visited?.[view] || []);
-    state.bucket[view] = Array.from(new Set(raw.bucket?.[view] || []));
+function idList(value) {
+  if (value == null) return [];
+  if (!Array.isArray(value) || !value.every((id) => typeof id === 'string')) {
+    throw new TypeError('Expected a list of ids');
   }
-  if (raw.view in VIEWS) state.view = raw.view;
+  return value;
+}
+
+// Validates the whole snapshot before touching state, so a bad file can't
+// leave some views replaced and others not.
+function applySnapshot(raw) {
+  if (!raw || typeof raw !== 'object') throw new TypeError('Expected an object');
+  const next = { visited: {}, bucket: {} };
+  for (const view of Object.keys(VIEWS)) {
+    next.visited[view] = new Set(idList(raw.visited?.[view]));
+    next.bucket[view] = Array.from(new Set(idList(raw.bucket?.[view])));
+  }
+  Object.assign(state.visited, next.visited);
+  Object.assign(state.bucket, next.bucket);
+  if (Object.hasOwn(VIEWS, raw.view)) state.view = raw.view;
   if (typeof raw.panelOpen === 'boolean') state.panelOpen = raw.panelOpen;
 }
 
